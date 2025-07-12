@@ -60,13 +60,14 @@ footer a {
 }
 
 .coin {
-    font-size: 100px;
     cursor: pointer;
     position: absolute;
     left: 200px;
     top: 200px;
     user-select: none;
     transition: transform 0.1s, filter 0.1s;
+    width: 100px;
+    height: 100px;
 }
 
 @keyframes spin {
@@ -88,6 +89,12 @@ footer a {
     100% { transform: translateX(0); }
 }
 
+@keyframes hatch {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; filter: brightness(2); }
+    100% { transform: scale(0); opacity: 0; }
+}
+
 .spin {
     animation: spin 10s linear infinite;
 }
@@ -103,6 +110,10 @@ footer a {
 .clicked {
     transform: scale(1.2);
     filter: brightness(1.5);
+}
+
+.hatch {
+    animation: hatch 0.5s forwards;
 }
 
 #skillCheck {
