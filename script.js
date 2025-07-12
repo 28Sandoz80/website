@@ -100,7 +100,7 @@ let skillActive = false;
 let greenWidth = 30;
 let meterSpeed = 2000;
 
-// Skill check function (unchanged from previous)
+// Skill check function (unchanged)
 function triggerSkillCheck() {
     skillActive = true;
     coin.style.pointerEvents = 'none';
@@ -151,7 +151,7 @@ function endSkillCheck(success) {
     clickCount.textContent = clicks;
 }
 
-// Update coin SVG with degradation and level
+// Update coin SVG
 function updateCoinSVG(level, damage) {
     let svg = `<svg width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="${colors[level]}" stroke="black" stroke-width="2"/>`;
     for (let i = 0; i < damage; i++) {
@@ -219,17 +219,19 @@ coin.addEventListener('click', () => {
     if (phase === 0 && clicks <= 1000 && clicks > 0) {
         // Hatch/break
         coin.classList.add('hatch');
-        setTimeout(() => {
+        const onHatchEnd = () => {
             coin.classList.remove('hatch');
-            coin.style.opacity = 1;
             coin.style.transform = 'scale(1)';
+            coin.style.opacity = '1';
             coin.style.filter = 'brightness(1)';
             updateCoinSVG(level, 0); // New coin, no damage
             animations.forEach(anim => coin.classList.remove(anim));
             coin.classList.add(animations[level]);
-        }, 500);
+            coin.removeEventListener('animationend', onHatchEnd);
+        };
+        coin.addEventListener('animationend', onHatchEnd);
     } else {
-        const damage = Math.floor((phase / 100) * 5); // 0 to 4 cracks progressively
+        const damage = Math.floor(phase / 20); // Add a crack every 20 clicks (up to 4 per phase)
         updateCoinSVG(level, damage);
     }
 
