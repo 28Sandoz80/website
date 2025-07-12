@@ -78,11 +78,16 @@ function submitScore() {
         clickCount.textContent = clicks;
         startTime = null;
         timerInterval = null;
+        // Reset coin position and texture
+        coin.style.left = '200px';
+        coin.style.top = '200px';
+        coin.innerHTML = '🪙';
+        animations.forEach(anim => coin.classList.remove(anim));
     }
 }
 
-// Enhancements: Textures and animations
-const textures = ['coin1.png', 'coin2.png', 'coin3.png', 'coin4.png', 'coin5.png', 'coin6.png', 'coin7.png', 'coin8.png', 'coin9.png', 'coin10.png'];
+// Enhancements: "Textures" as emojis and animations
+const textures = ['🪙', '💰', '🏅', '🟡', '🔴', '🔵', '🟢', '🟣', '🟠', '⚪'];
 const animations = ['spin', 'pulse', 'shake', 'spin', 'pulse', 'shake', 'spin', 'pulse', 'shake', 'spin'];
 let currentTexture = 0;
 
@@ -125,11 +130,11 @@ coin.addEventListener('click', () => {
     coin.style.left = newLeft + 'px';
     coin.style.top = newTop + 'px';
 
-    // Change texture and animation every 100 clicks up to 1000
+    // Change "texture" (emoji) and animation every 100 clicks up to 1000
     if (clicks % 100 === 0 && clicks <= 1000) {
         currentTexture = Math.floor(clicks / 100) - 1;
         if (currentTexture >= textures.length) currentTexture = textures.length - 1;
-        coin.src = textures[currentTexture];
+        coin.innerHTML = textures[currentTexture];
         // Remove previous animation classes
         animations.forEach(anim => coin.classList.remove(anim));
         // Add new animation class
