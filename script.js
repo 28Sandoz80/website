@@ -86,7 +86,7 @@ function submitScore() {
         timerInterval = null;
         coin.style.left = '200px';
         coin.style.top = '200px';
-        coin.innerHTML = '🪙';
+        updateCoinSVG(0, 0);
         animations.forEach(anim => coin.classList.remove(anim));
         diddyImage.style.display = 'none';
         skillCheck.style.display = 'none';
@@ -94,22 +94,22 @@ function submitScore() {
 }
 
 // Enhancements
-const textures = ['🪙', '💰', '🏅', '🟡', '🔴', '🔵', '🟢', '🟣', '🟠', '⚪'];
+const colors = ['gold', 'silver', '#FF4500', '#00BFFF', '#32CD32', '#FF69B4', '#FFD700', '#C0C0C0', '#B22222', '#4B0082'];
 const animations = ['spin', 'pulse', 'shake', 'spin', 'pulse', 'shake', 'spin', 'pulse', 'shake', 'spin'];
-let currentTexture = 0;
 let skillActive = false;
-let greenWidth = 30; // Start with 30% green zone, decreases to make harder
-let meterSpeed = 2000; // 2 seconds, decreases to make harder
+let greenWidth = 30;
+let meterSpeed = 2000;
 
+// Skill check function (unchanged from previous)
 function triggerSkillCheck() {
     skillActive = true;
-    coin.style.pointerEvents = 'none'; // Disable clicking during skill check
+    coin.style.pointerEvents = 'none';
     skillCheck.style.display = 'block';
     const keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const key = keys[Math.floor(Math.random() * keys.length)];
     randomKey.textContent = key;
     bar.style.width = '0%';
-    greenZone.style.left = '35%'; // Center green zone
+    greenZone.style.left = '35%';
     greenZone.style.width = greenWidth + '%';
     let progress = 0;
     const interval = setInterval(() => {
@@ -117,13 +117,13 @@ function triggerSkillCheck() {
         bar.style.width = progress + '%';
         if (progress >= 100) {
             clearInterval(interval);
-            endSkillCheck(false); // Miss if not pressed
+            endSkillCheck(false);
         }
-    }, meterSpeed / 100); // Animate over meterSpeed ms
+    }, meterSpeed / 100);
 
     const keyListener = (e) => {
         if (e.key.toUpperCase() === key) {
-            document.removeEventFromListener('keydown', keyListener);
+            document.removeEventListener('keydown', keyListener);
             clearInterval(interval);
             const position = parseInt(bar.style.width);
             const greenStart = 35;
@@ -146,10 +146,23 @@ function endSkillCheck(success) {
     skillActive = false;
     skillCheck.style.display = 'none';
     coin.style.pointerEvents = 'auto';
-    // Make harder
-    greenWidth = Math.max(10, greenWidth - 2); // Decrease green zone
-    meterSpeed = Math.max(1000, meterSpeed - 100); // Faster meter
+    greenWidth = Math.max(10, greenWidth - 2);
+    meterSpeed = Math.max(1000, meterSpeed - 100);
     clickCount.textContent = clicks;
+}
+
+// Update coin SVG with degradation and level
+function updateCoinSVG(level, damage) {
+    let svg = `<svg width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="${colors[level]}" stroke="black" stroke-width="2"/>`;
+    for (let i = 0; i < damage; i++) {
+        const x1 = Math.random() * 60 + 20;
+        const y1 = Math.random() * 60 + 20;
+        const x2 = Math.random() * 60 + 20;
+        const y2 = Math.random() * 60 + 20;
+        svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="black" stroke-width="3"/>`;
+    }
+    svg += `</svg>`;
+    coin.innerHTML = svg;
 }
 
 // Event listeners
@@ -200,13 +213,24 @@ coin.addEventListener('click', () => {
     coin.style.left = newLeft + 'px';
     coin.style.top = newTop + 'px';
 
-    // Change texture
-    if (clicks % 100 === 0 && clicks <= 1000) {
-        currentTexture = Math.floor(clicks / 100) - 1;
-        if (currentTexture >= textures.length) currentTexture = textures.length - 1;
-        coin.innerHTML = textures[currentTexture];
-        animations.forEach(anim => coin.classList.remove(anim));
-        coin.classList.add(animations[currentTexture]);
+    // Degradation and hatching
+    const level = Math.min(Math.floor(clicks / 100), 9);
+    const phase = clicks % 100;
+    if (phase === 0 && clicks <= 1000 && clicks > 0) {
+        // Hatch/break
+        coin.classList.add('hatch');
+        setTimeout(() => {
+            coin.classList.remove('hatch');
+            coin.style.opacity = 1;
+            coin.style.transform = 'scale(1)';
+            coin.style.filter = 'brightness(1)';
+            updateCoinSVG(level, 0); // New coin, no damage
+            animations.forEach(anim => coin.classList.remove(anim));
+            coin.classList.add(animations[level]);
+        }, 500);
+    } else {
+        const damage = Math.floor((phase / 100) * 5); // 0 to 4 cracks progressively
+        updateCoinSVG(level, damage);
     }
 
     // Click effect
@@ -220,3 +244,4 @@ giveUpBtn.addEventListener('click', submitScore);
 
 // Initial load
 loadLeaderboard();
+updateCoinSVG(0, 0); // Initial coin
