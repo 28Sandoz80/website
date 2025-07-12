@@ -81,6 +81,11 @@ function submitScore() {
     }
 }
 
+// Enhancements: Textures and animations
+const textures = ['coin1.png', 'coin2.png', 'coin3.png', 'coin4.png', 'coin5.png', 'coin6.png', 'coin7.png', 'coin8.png', 'coin9.png', 'coin10.png'];
+const animations = ['spin', 'pulse', 'shake', 'spin', 'pulse', 'shake', 'spin', 'pulse', 'shake', 'spin'];
+let currentTexture = 0;
+
 // Event listeners
 coin.addEventListener('click', () => {
     if (!startTime) {
@@ -102,6 +107,40 @@ coin.addEventListener('click', () => {
         const randomIndex = Math.floor(Math.random() * (mockingPhrases.length - 2)) + 2; // From index 2 onward
         speakPhrase(mockingPhrases[randomIndex]);
     }
+
+    // Move coin
+    const maxOffset = 50;
+    const offsetX = Math.random() * maxOffset - maxOffset / 2;
+    const offsetY = Math.random() * maxOffset - maxOffset / 2;
+    let currentLeft = parseInt(coin.style.left) || 200;
+    let currentTop = parseInt(coin.style.top) || 200;
+    const minLeft = 0;
+    const maxLeft = window.innerWidth - 100; // Adjust based on window width minus coin size
+    const minTop = 0;
+    const maxTop = window.innerHeight - 100; // Adjust based on window height minus coin size
+    let newLeft = currentLeft + offsetX;
+    let newTop = currentTop + offsetY;
+    newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
+    newTop = Math.max(minTop, Math.min(maxTop, newTop));
+    coin.style.left = newLeft + 'px';
+    coin.style.top = newTop + 'px';
+
+    // Change texture and animation every 100 clicks up to 1000
+    if (clicks % 100 === 0 && clicks <= 1000) {
+        currentTexture = Math.floor(clicks / 100) - 1;
+        if (currentTexture >= textures.length) currentTexture = textures.length - 1;
+        coin.src = textures[currentTexture];
+        // Remove previous animation classes
+        animations.forEach(anim => coin.classList.remove(anim));
+        // Add new animation class
+        coin.classList.add(animations[currentTexture]);
+    }
+
+    // Click effect
+    coin.classList.add('clicked');
+    setTimeout(() => {
+        coin.classList.remove('clicked');
+    }, 100);
 });
 
 giveUpBtn.addEventListener('click', submitScore);
