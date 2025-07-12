@@ -17,13 +17,6 @@ main {
     padding: 20px;
 }
 
-.coin {
-    font-size: 100px; /* Or use width/height if using an image */
-    cursor: pointer;
-    margin: 20px auto;
-    user-select: none; /* Prevent text selection */
-}
-
 button {
     background-color: #008CBA;
     color: white;
@@ -64,4 +57,50 @@ footer {
 footer a {
     color: #4CAF50;
     text-decoration: none;
+}
+
+.coin {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    position: absolute;
+    left: 200px;
+    top: 200px;
+    user-select: none;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.spin {
+    animation: spin 10s linear infinite;
+}
+
+.pulse {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+.clicked {
+    transform: scale(1.2);
+    filter: brightness(1.5);
 }
