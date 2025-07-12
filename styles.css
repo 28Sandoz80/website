@@ -104,3 +104,36 @@ footer a {
     transform: scale(1.2);
     filter: brightness(1.5);
 }
+
+#skillCheck {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 10;
+}
+
+#meter {
+    width: 300px;
+    height: 20px;
+    background: gray;
+    position: relative;
+}
+
+#bar {
+    width: 0;
+    height: 100%;
+    background: blue;
+    transition: width linear;
+}
+
+#greenZone {
+    position: absolute;
+    height: 100%;
+    background: green;
+    opacity: 0.5;
+}
